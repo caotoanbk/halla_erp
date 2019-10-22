@@ -1,7 +1,5 @@
 @extends('layouts.manage')
 
-@include('manage.partials.nav-sidebar')
-
 @section('content')
 <h2>Edit {{ ucfirst($table) }}</h2>
 @if ($errors->any())

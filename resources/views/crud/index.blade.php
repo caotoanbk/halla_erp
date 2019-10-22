@@ -1,5 +1,4 @@
 @extends('layouts.manage')
-
  
 @section('content')
     @if ($message = Session::get('success'))
