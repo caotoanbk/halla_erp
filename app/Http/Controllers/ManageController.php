@@ -21,4 +21,9 @@ class ManageController extends Controller
         return view('material.home');
     }
 
+    public function approvalHome(){
+        session(['selectedFunc' => 'approval']);
+        return view('approval.home');
+    }
+
 }

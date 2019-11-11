@@ -38,7 +38,7 @@ class CrudController extends Controller
 
                 $datatables = $datatables->editColumn($key, function($m) use ($strEval) {
                     $temp = eval("return $strEval;");
-                    return '<img src="'.asset("images/employees/$temp").'" class="img-thumbnail" />';
+                    return '<img src="'.asset("images/employees/$temp").'" class="img-thumbnail" style="max-height: 35px;" />';
                 });
             }
         }

@@ -11,9 +11,12 @@ try {
     window.$ = window.jQuery = require('jquery');
 
     require('bootstrap');
+    require('admin-lte');
     window.dt = require('datatables.net');
     require('datatables.net-bs4');
-    require('startbootstrap-sb-admin-2/js');
+    // require('startbootstrap-sb-admin-2/js/sb-admin-2');
+    require('bootstrap-select/dist/js/bootstrap-select.min');
+
 
 } catch (e) {}
 

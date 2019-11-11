@@ -1,4 +1,4 @@
-@extends('layouts.manage')
+@extends(session('selectedFunc').'.layout')
  
 @section('content')
     @if ($message = Session::get('success'))

@@ -1,6 +1,4 @@
-@extends('layouts.manage')
-
-@include('manage.partials.nav-sidebar')
+@extends('material.layout')
 
 @section('content')
 <h2>Add New {{ ucfirst($table) }}</h2>

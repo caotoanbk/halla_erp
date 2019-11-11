@@ -1,0 +1,105 @@
+#mytable{
+
+}
+#mytable td,th,tr {
+    border:1px solid black;
+    vertical-align: middle;
+}
+#mytable thead th{
+    background-color: #f2dcdb;
+    border:1px solid black;
+}
+
+.content-wrapper {
+    position: relative;
+    font-size:12px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+#printfooter1{
+  display:none;
+}
+#TableHeader{
+background-color:#354458;
+color:white;
+}
+#TableHeader th{
+text-align:center;
+}
+/* table {
+  table-layout: fixed;
+} */
+table,td, th, thead{
+border:1px solid var(--secondary);
+/* text-align:center; */
+
+}
+table.tableitems, table.tableitems td, table.tableitems th {
+    border: 1px solid #ced4da;
+    padding: 4px;
+}
+table.bankinfo, table.bankinfo td, table.bankinfo th {
+    border: 1px solid var(--secondary);
+    padding: 4px;
+}
+td,th{
+vertical-align:middle;
+}
+td{
+word-wrap: break-word;
+}
+#appname{
+    /* font-size:40px;  */
+    padding:0px; 
+    line-height:50px;
+    color:white;
+}
+.appname{
+  float: left;
+  z-index: -1;
+  height:50px;
+  line-height:50px;
+  font-size:35px;
+  text-align:center;
+  color:white;
+  width:55%;
+
+}
+#controlpanelline h2{
+  margin:10px;
+}
+#controlpanelline a{
+  display:inline-block;
+  height:33px;
+  line-height:33px;
+  margin-top:10px;
+  font-size:30px;
+  color:grey;
+
+}
+#controlpanelline a:hover{
+  color:black;
+}
+#needprint{
+  display:none;
+ }
+ #needprint2{
+  display:none;
+  text-align:right;
+  width:30%;
+ }
+ #printfooter1{
+   /* display:none; */
+ }
+a{
+  color:#5D4C46;
+}
+#mytable td{
+  padding:3px;
+}
+.form-control[readonly]{
+    background-color: #fff;
+}
+.vs__dropdown-toggle {
+    border: 0px;
+    margin-top: -4px;
+}

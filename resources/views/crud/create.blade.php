@@ -1,4 +1,4 @@
-@extends('layouts.manage')
+@extends(session('selectedFunc').'.layout')
 
 @section('content')
 <h2>Add New {{ ucfirst($table) }}</h2>
@@ -32,7 +32,7 @@
             <div class="col-xs-12 col-sm-6">
                 <div class="form-group">
                     <strong>{{convertColumnNameToString($key)}}:</strong>
-                    {!! Form::select($key, ${'items'.$loop->index}, null,['class' => 'form-control', 'placeholder' => 'select'] ) !!}
+                    {!! Form::select($key, ${'items'.$loop->index}, null,['class' => 'form-control', 'placeholder' => 'select..', 'data-live-search' => 'true'] ) !!}
                 </div>
             </div>
 

@@ -1,4 +1,4 @@
-@extends('layouts.manage')
+@extends('material.layout')
 
 @include('manage.partials.nav-sidebar')
   

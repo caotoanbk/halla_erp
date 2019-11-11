@@ -3,15 +3,28 @@
 
 // Variables
 @import 'variables';
+$fa-font-path: "../webfonts";
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+@import '~admin-lte/dist/css/adminlte.css';
 
 // Datatable bootstrap 4
 @import '~datatables.net-bs4/css/dataTables.bootstrap4.min.css';
 
 // Sb admin 2
-@import '~startbootstrap-sb-admin-2/scss/sb-admin-2';
+//@import '~startbootstrap-sb-admin-2/scss/sb-admin-2';
+
+// Bootstrap select
+@import '~bootstrap-select/sass/bootstrap-select';
+
+//font awesome free
+@import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "~@fortawesome/fontawesome-free/scss/solid.scss";
+@import "~@fortawesome/fontawesome-free/scss/brands.scss";
+
+//vue-select
+@import "vue-select/src/scss/vue-select.scss";
 
 // Overrides
 @import 'overrides';

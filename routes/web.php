@@ -21,7 +21,6 @@ Route::prefix('admin')->group(function(){
 
 Route::prefix('material')->group(function(){
 
-
     Route::get('/', function() {
 
         session(['selectedFunc' => 'material']);
@@ -31,6 +30,19 @@ Route::prefix('material')->group(function(){
 
     Route::get('/dashboard', 'ManageController@materialHome')->name('material.dashboard');
 
+});
+
+Route::prefix('approval')->group(function(){
+
+    Route::get('/', function() {
+
+        session(['selectedFunc' => 'approval']);
+
+        return redirect()->route('approval.dashboard');
+    });
+    Route::get('/dashboard', 'ManageController@approvalHome')->name('approval.dashboard');
+
+    Route::get('/{approvaltype}/create', 'ApprovalController@create');
 });
 
 Route::prefix('crud')->group(function(){
@@ -52,6 +64,8 @@ Route::prefix('crud')->group(function(){
     Route::delete('/{table}/destroy/{id}', 'CrudController@destroy')->name('crud.destroy');
 
 });
+
+Route::get('api/get-purchase-approval-data', 'ApprovalController@getPurchaseConfigData');
 
 Auth::routes();
 
