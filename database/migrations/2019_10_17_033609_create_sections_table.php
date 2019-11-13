@@ -18,8 +18,8 @@ class CreateSectionsTable extends Migration
             $table->string('SectionName', 255);
             $table->string('SectionInformation', 255);
             $table->string('SectionStatus', 50);
-            $table->integer('team_id')->unsigned();
-            $table->foreign('team_id')->references('id')->on('teams')->onDelete('cascade')->onUpdate('cascade');
+            // $table->integer('team_id')->unsigned();
+            // $table->foreign('team_id')->references('id')->on('teams')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }

@@ -16,7 +16,7 @@ class CreatePartsTable extends Migration
         Schema::create('parts', function (Blueprint $table) {
             $table->increments('id');
             $table->string('PartName', 255);
-            $table->string('PartInformation', 255);
+            $table->string('PartInformation', 255)->nullable();
             $table->string('PartStatus', 255);
             $table->integer('team_id')->unsigned();
             $table->foreign('team_id')

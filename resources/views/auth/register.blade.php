@@ -39,7 +39,8 @@
                             </div>
                         </div>
                         <?php
-                        $employees = \App\Employee::pluck('EmployeeName', 'id');
+                        $existUsers = \App\User::pluck('employee_id');
+                        $employees = \App\Employee::whereNotIn('id', $existUsers)->pluck('EmployeeName', 'id');
                         ?>
                         <div class="form-group row">
                             <label for="employee_id" class="col-md-4 col-form-label text-md-right">{{ __('Employee') }}</label>

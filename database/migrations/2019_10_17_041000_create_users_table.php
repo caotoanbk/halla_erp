@@ -20,6 +20,9 @@ class CreateUsersTable extends Migration
             $table->integer('employee_id')->unsigned();
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade')->onUpdate('cascade');
             $table->string('password');
+            $table->tinyInteger('forced_line')->default(false)->nullable();
+            $table->tinyInteger('sortIndex')->nullable();
+            $table->string('UserRole', 50)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

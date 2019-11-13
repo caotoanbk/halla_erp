@@ -16,13 +16,13 @@ class CreateTeamsTable extends Migration
         Schema::create('teams', function (Blueprint $table) {
             $table->increments('id');
             $table->string('TeamName', 255);
-            $table->string('TeamInformation', 255);
+            $table->string('TeamInformation', 255)->nullable();
             $table->string('TeamStatus', 50);
-            $table->integer('division_id')->unsigned();
-            $table->foreign('division_id')
-                  ->references('id')->on('divisions')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');
+            // $table->integer('division_id')->unsigned();
+            // $table->foreign('division_id')
+            //       ->references('id')->on('divisions')
+            //       ->onDelete('cascade')
+            //       ->onUpdate('cascade');
             $table->timestamps();
         });
     }
