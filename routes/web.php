@@ -4,6 +4,7 @@ Route::get('/', function(){
     return redirect()->route('home');
 });
 
+Route::resource('purchases', 'PurchaseController');
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::prefix('admin')->group(function(){
@@ -43,6 +44,8 @@ Route::prefix('approval')->group(function(){
     Route::get('/dashboard', 'ManageController@approvalHome')->name('approval.dashboard');
 
     Route::get('/{approvaltype}/create', 'ApprovalController@create');
+    
+    Route::get('/{approvaltype}/update/{id}', 'ApprovalController@update');
 });
 
 Route::prefix('crud')->group(function(){
@@ -66,6 +69,7 @@ Route::prefix('crud')->group(function(){
 });
 
 Route::get('api/get-purchase-approval-data', 'ApprovalController@getPurchaseConfigData');
+Route::get('api/get-purchase-approval-data/{id}', 'ApprovalController@getPurchaseData');
 
 Auth::routes();
 

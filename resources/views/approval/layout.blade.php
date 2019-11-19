@@ -96,6 +96,7 @@
     <!-- Main content -->
     <div class="container-fluid" style="background: #fff;" id="approval_app">
       <div class="row">
+        <vue-progress-bar></vue-progress-bar>
         @yield('content')
       </div>
     </div><!-- /.container-fluid -->

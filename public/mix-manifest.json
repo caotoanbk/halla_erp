@@ -1,5 +1,6 @@
 {
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
-    "/js/approval/purchase/create-purchase.js": "/js/approval/purchase/create-purchase.js"
+    "/js/approval/purchase/create-purchase.js": "/js/approval/purchase/create-purchase.js",
+    "/js/approval/purchase/update-purchase.js": "/js/approval/purchase/update-purchase.js"
 }

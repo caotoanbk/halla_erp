@@ -35,11 +35,11 @@ Vue.use(VueProgressBar, {
 import money from 'v-money'
 Vue.use(money, {precision: 4})
 
-import CreatePurchaseRequestComponent from './CreatePurchaseRequestComponent.vue';
+import UpdatePurchaseRequestComponent from './UpdatePurchaseRequestComponent.vue';
 
 const app = new Vue({
     el: '#approval_app',
     components: { 
-        'create-purchase-request': CreatePurchaseRequestComponent
+        'update-purchase-request': UpdatePurchaseRequestComponent
     },
 });

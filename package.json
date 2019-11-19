@@ -24,16 +24,25 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "@babel/plugin-proposal-class-properties": "^7.7.0",
         "@fortawesome/fontawesome-free": "^5.11.2",
+        "@vuex-orm/core": "^0.33.0",
         "admin-lte": "^3.0.0",
         "bootstrap-select": "^1.13.12",
         "datatables.net-bs4": "^1.10.20",
         "laravel-vue-pagination": "^2.3.1",
+        "object-to-formdata": "^2.1.2",
         "startbootstrap-sb-admin-2": "^4.0.7",
         "v-money": "^0.8.1",
         "vform": "^1.0.1",
         "vue-progressbar": "^0.7.5",
         "vue-select": "^3.2.0",
-        "vuejs-datepicker": "^1.6.2"
+        "vuejs-datepicker": "^1.6.2",
+        "vuex": "^3.1.2"
+    },
+    "babel": {
+        "plugins": [
+            "@babel/plugin-proposal-class-properties"
+        ]
     }
 }

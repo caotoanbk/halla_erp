@@ -1,6 +1,4 @@
-#mytable{
 
-}
 #mytable td,th,tr {
     border:1px solid black;
     vertical-align: middle;
@@ -64,32 +62,7 @@ word-wrap: break-word;
   width:55%;
 
 }
-#controlpanelline h2{
-  margin:10px;
-}
-#controlpanelline a{
-  display:inline-block;
-  height:33px;
-  line-height:33px;
-  margin-top:10px;
-  font-size:30px;
-  color:grey;
 
-}
-#controlpanelline a:hover{
-  color:black;
-}
-#needprint{
-  display:none;
- }
- #needprint2{
-  display:none;
-  text-align:right;
-  width:30%;
- }
- #printfooter1{
-   /* display:none; */
- }
 a{
   color:#5D4C46;
 }
@@ -105,4 +78,7 @@ a{
 }
 .vselect-input{
   border: 1px solid rgb(170,170,170);
+}
+.table.table-file-list th, .table.table-file-list td{
+    padding: 0.35rem;
 }

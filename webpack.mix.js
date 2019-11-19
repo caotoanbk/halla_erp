@@ -13,4 +13,5 @@ const mix = require('laravel-mix');
 
 mix.js('resources/js/app.js', 'public/js')
     .js('resources/js/approval/purchase/create-purchase.js', 'public/js/approval/purchase')
+    .js('resources/js/approval/purchase/update-purchase.js', 'public/js/approval/purchase')
    .sass('resources/sass/app.scss', 'public/css');

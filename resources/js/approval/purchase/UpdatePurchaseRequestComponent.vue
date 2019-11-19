@@ -12,7 +12,7 @@
         <div class="col-md-8">
             <div class="row">
                 <div class="col-xs-12 col-md-12">
-                    <h2 style="margin-top: 20px; margin-bottom: 10px;"><i class="fas fa-plus-circle"></i> 새로운 요청/ NEW PURCHASE REQUEST</h2>
+                    <h2 style="margin-top: 20px; margin-bottom: 10px;"><i class="fas fa-edit"></i> 새로운 요청/ EDIT PURCHASE REQUEST - {{this.purchase_id}}</h2>
                 </div>
                 <div class="col-md-3">
                   <div class="input-group">
@@ -54,12 +54,12 @@
                 </div>
                 <div class="col-md-3">
                    <strong>Payment date:</strong> 
-                   <datepicker @input="form.paymentDate = fixDate($event)" format="yyyy-MM-dd" input-class="form-control"></datepicker>
+                   <datepicker @input="form.paymentDate = fixDate($event)" format="yyyy-MM-dd" input-class="form-control" v-model="form.paymentDate"></datepicker>
             
                 </div>
                 <div class="col-md-3">
                    <strong>Received Date:</strong>
-                   <datepicker @input="form.receiveDate = fixDate($event)" format="yyyy-MM-dd" input-class="form-control"></datepicker>
+                   <datepicker @input="form.receiveDate = fixDate($event)" v-model="form.receiveDate" format="yyyy-MM-dd" input-class="form-control"></datepicker>
                 </div>
                 <div class="col-md-3">
                   <strong>Currency:</strong> 
@@ -200,19 +200,25 @@
             </h3>
             <div class="lineapp row">
                 <div class="col-md-12">
-                    <div class="form-group" v-for="(line, index) in form.normalLines" :key="index">
+                    <p class="mb-1" v-for="(line,index) in normalLineOrigin" :key="index">
+                        {{findUser(parseInt(line.user_id)).employee.EmployeeName + ' - ' + findUser(parseInt(line.user_id)).employee.EmployeeInformation}}
+                    </p>
+                    <div class="mb-2" v-for="(line,index) in form.normalLines" :key="line.id">
                         <v-select 
-                        :placeholder="'line ' + (index+1)"
+                        :placeholder="'line ' + (index + 1)"
                         :options="usersOptions" 
                         v-model="line.user_id"
-                        :getOptionLabel="u => (u.employee.EmployeeName + ' - ' + u.employee.EmployeeInformation)" 
+                        :getOptionLabel="u => (u.employee.EmployeeName + ' - ' +u.employee.EmployeeInformation)" 
                         :reduce="user => user.id" 
                         class="form-control" />
                     </div>
-                    <div class="mb-1">
-                        <a class="text-info" href="#" @click="addNormalLine()">Add more line</a>
+                    <div class="" v-if="normalLineOrigin.length == 0">
+                        <a class="text-info" href="#" @click="addNormalLine()">Add new line</a>
                         &nbsp;|&nbsp;
                         <a class="text-danger" href="#" @click="removeNormalLine()">Remove last line</a>
+                    </div>
+                    <div v-else>
+                        <a class="text-info" href="#" @click="normalLineOrigin = []">Edit lines</a>
                     </div>
 
                 </div>
@@ -230,7 +236,7 @@
                       <table class="table table-bordered">
                         <tbody><tr><th class="w-50">Group name</th><td>{{currentSelectCashgroup.CashgroupName?currentSelectCashgroup.CashgroupName:'-'}}</td></tr>
                         <tr><th>Budget</th><td>{{currentSelectCashgroup.CashgroupBudget?currentSelectCashgroup.CashgroupBudget.toLocaleString('es-ES'):'-'}}</td></tr>
-                        <tr><th>Current Amount</th><td>-</td></tr>
+                        <tr><th>Current Amount</th><td>{{(amountBeforeVAT + amountBeforeVAT * VATratio / 100).toLocaleString('es-ES')}}</td></tr>
                         <tr><th>Rate</th><td>-</td></tr>
                       </tbody></table>
                     </div>
@@ -259,8 +265,7 @@
                       </table>
                 </div>
                 <div class="col-md-4">
-                    <button v-if="!editMode" @click.prevent="saveData()" class="btn btn-warning btn-block">save</button>
-                    <button v-else @click.prevent="updateData()" class="btn btn-warning btn-block">update</button>
+                    <button @click.prevent="updateData()" class="btn btn-danger btn-block">update</button>
                 </div>
 
                 <div class="col-md-4">
@@ -281,6 +286,7 @@
     import objectToFormData from 'object-to-formdata'
 
     export default {
+        props: ['purchase_id'],
         data() {
             return {
                 form: new Form({
@@ -303,9 +309,9 @@
                     normalLines:[{user_id: ''}],
                     forcedLines:[]
                 }),
+                normalLineOrigin:[],
                 itemChanged: false,
                 errors: [],
-                editMode: false,
                 VATratio:0,
                 supplierOptions: [],
                 cashgroupsOptions: [],
@@ -365,6 +371,7 @@
                 return moment(event).format('YYYY-MM-DD')
             },
             prepareFiles() {
+                this.form.attachments = []
                 var files = this.$refs.files_input.files;
                 if(!files.length)
                     return;
@@ -409,25 +416,6 @@
             calculateAmount(item){
                 item.amount = item.quantity * item.unp;
             },
-            saveData(){
-                if(this.checkForm()){
-                    this.$Progress.start();
-                    this.form.post('/purchases')
-                    .then(({data}) => { 
-                        this.form.id = data[0].id
-                        this.editMode = true
-                        // this.itemChanged = false;
-                        toast.fire({
-                            type: 'success',
-                          title: 'Purchase request created successfully!'
-                        });
-                        this.$Progress.finish();
-                    })
-                    .catch(() => {
-                        this.$Progress.fail();
-                    })
-                }
-            },
             updateData(){
                 if(this.checkForm()){
                     this.$Progress.start();
@@ -445,6 +433,11 @@
                     })
                 }
             },
+            findUser(id) {
+                return this.usersOptions.filter((item) => {
+                    return id === item.id
+                })[0]
+            },
             onSupplierChange() {
                 this.currentSelectSupplier = this.supplierOptions.filter((item) => {
                     return this.form.supplierId === item.id;
@@ -461,18 +454,33 @@
                     this.currentSelectCashgroup = {}
 
             },
-            loadConfigData() {
-                axios.get("/api/get-purchase-approval-data").then(({data}) => {
+            loadData() {
+                axios.get("/api/get-purchase-approval-data/"+this.purchase_id).then(({data}) => {
                     this.supplierOptions = data.suppliers;
                     this.cashgroupsOptions = data.cashgroups;
                     this.materialOptions = data.materials;
                     this.usersOptions = data.users;
+
+                    this.form.fill(data.curPur[0])
                     this.form.forcedLines = data.forcedLines;
-                });
+                    this.form.normalLines = []
+                    this.normalLineOrigin = data.curPur[0].lines.filter((item) => {
+                        return item.type == null
+                    })
+
+                    this.form.attachments = data.curPur[0].files
+
+                    this.form.cashgroupId = parseInt(this.form.cashgroupId)
+                    this.form.supplierId = parseInt(this.form.supplierId)
+
+                    this.onCashgroupChange()
+                    this.onSupplierChange()
+                })
+
             }
         },
         created() {
-            this.loadConfigData();
+            this.loadData();
         },
         mounted() {
         },
@@ -480,12 +488,6 @@
             amountBeforeVAT: function() {
                 return this.form.items.reduce((acc, item) => acc + parseFloat(item.amount), 0)
             }
-        },
-        watch: {
-            // 'form.items': function(newVal, oldVal){
-            //     if(this.editMode)
-            //         this.itemChanged = true;
-            // }
         },
         components: {
             Datepicker
