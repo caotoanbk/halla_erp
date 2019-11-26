@@ -21,6 +21,7 @@ class CreatePurchaseitemsTable extends Migration
             $table->integer('quantity');
             $table->integer('unp');
             $table->bigInteger('amount');
+            $table->string('mark')->nullable();
             $table->timestamps();
 
             //foreign key

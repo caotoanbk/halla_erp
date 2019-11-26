@@ -18,7 +18,7 @@
     <!-- Left navbar links -->
     <ul class="navbar-nav">
       <li class="nav-item d-flex mr-1" style="align-items: center;">
-        <img src="/img/hallalogo.png" style="max-height: 30px;">
+        <a href="/approval"><img src="/img/hallalogo.png" style="max-height: 30px;"></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block mr-1">
         <a href="/" class="nav-link"><i class="fas fa-home"></i></a>
@@ -42,7 +42,7 @@
         </div>
       </li>
     </ul>
-    <h2 class="m-0 text-white">INTERNAL APPROVAL</h2>
+    <h2 class="m-0"><a class="text-white" href="/approval">INTERNAL APPROVAL</a></h2>
     <!-- Right navbar links -->
     <ul class="navbar-nav">
       <li class="nav-item dropdown">
@@ -62,7 +62,7 @@
             기타 요청/ Other request
           </a>
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
+          <a href="/approval/paymentplan" class="dropdown-item">
             지불 계획/ Payment Plan
           </a>
         </div>
@@ -95,6 +95,11 @@
 
     <!-- Main content -->
     <div class="container-fluid" style="background: #fff;" id="approval_app">
+      @if ($message = Session::get('status'))
+          <div class="alert alert-success">
+              <p>{{ $message }}</p>
+          </div>
+      @endif
       <div class="row">
         <vue-progress-bar></vue-progress-bar>
         @yield('content')

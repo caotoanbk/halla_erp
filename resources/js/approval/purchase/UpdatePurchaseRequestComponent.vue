@@ -12,7 +12,7 @@
         <div class="col-md-8">
             <div class="row">
                 <div class="col-xs-12 col-md-12">
-                    <h2 style="margin-top: 20px; margin-bottom: 10px;"><i class="fas fa-edit"></i> 새로운 요청/ EDIT PURCHASE REQUEST - {{this.purchase_id}}</h2>
+                    <h2 style="margin-top: 20px; margin-bottom: 10px;"><i class="fas fa-edit"></i> 새로운 요청/ EDIT PURCHASE REQUEST - {{this.purchase_id}}<span v-if="form.isSubmitted == 1" class="bg-success float-right p-1 font-size: 16px;">SUBMITTED</span></h2>
                 </div>
                 <div class="col-md-3">
                   <div class="input-group">
@@ -109,6 +109,7 @@
                                 <td style="text-align:center; width: 10%;"><strong>단위/ Unit </strong></td>
                                 <td style="text-align:center"><strong>수량/ Quantity </strong></td>
                                 <td style="text-align:center"><strong>단가/ UNP </strong></td>
+                                <td style="text-align:center;width: 17%;"><strong>비고/ Mark</strong></td>
                                 <td style="text-align:center;width: 13%;"><strong>금액/ Amount</strong></td>
 
                             </tr>
@@ -125,35 +126,36 @@
                                 <td><input type="text" name="" style="width: 100%;" v-model="item.unit"></td>
                                 <td><input type="number" @change="calculateAmount(item)" name="" style="width: 100%;" v-model.number="item.quantity"></td>
                                 <td><money v-model="item.unp" v-bind="money" @keyup.native="calculateAmount(item)"></money></td>
-                                <td class="text-center">{{item.amount.toLocaleString('es-ES')}}</td>
+                                 <td><input type="text" name="" style="width: 100%;" v-model="item.mark"></td>
+                                <td class="text-right pr-3">{{parseFloat(item.amount).toLocaleString('es-ES')}}</td>
                                 <td><a href="#" @click.prevent="removeItem(index)"><i class="fas fa-trash-alt red"></i></a></td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td style="height:15.0pt; text-align:center; white-space:nowrap">&nbsp;</td>
                                 <td colspan="2" style="height:15.0pt; text-align:center">총금액/ Total</td>
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
+                            </tr> -->
+                            <tr style="border-top: 1px solid red">
+                                <td style="height:15.0pt; text-align:center; white-space:nowrap">&nbsp;</td>
+                                <td colspan="5" style="height:15.0pt; text-align:center">총금액 ( VAT전)/ Amount before VAT</td>
+                                <td class="font-weight-bold text-right pr-3">{{amountBeforeVAT.toLocaleString('es-ES')}}</td>
                             </tr>
                             <tr>
                                 <td style="height:15.0pt; text-align:center; white-space:nowrap">&nbsp;</td>
-                                <td colspan="4" style="height:15.0pt; text-align:center">총금액 ( VAT전)/ Amount before VAT</td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td style="height:15.0pt; text-align:center; white-space:nowrap">&nbsp;</td>
-                                <td colspan="4" style="height:15.0pt; text-align:center">VAT(%)</td>
+                                <td colspan="5" style="height:15.0pt; text-align:center">VAT(%)</td>
                                 <td><input type="number" style="width: 100%;" v-model.number="VATratio"></td>
                             </tr>
                             <tr>
                                 <td style="height:15.0pt; text-align:center; white-space:nowrap">&nbsp;</td>
-                                <td colspan="4" style="height:15.0pt; text-align:center">총지불/ Total Payment (VND)</td>
-                                <td>{{(amountBeforeVAT + amountBeforeVAT * VATratio / 100).toLocaleString('es-ES')}}</td>
+                                <td colspan="5" style="height:15.0pt; text-align:center">총지불/ Total Payment (VND)</td>
+                                <td class="text-right pr-3">{{(amountBeforeVAT + amountBeforeVAT * VATratio / 100).toLocaleString('es-ES')}}</td>
                             </tr>
                             <tr>
                                 <td style="height:15.0pt; text-align:center; white-space:nowrap">&nbsp;</td>
-                                <td colspan="4" style="height:15.0pt; text-align:center">KRW</td>
-                                <td>&nbsp;</td>
+                                <td colspan="5" style="height:15.0pt; text-align:center">KRW</td>
+                                <td><money v-model="form.KRW" v-bind="money"></money></td>
                             </tr>
                         </tbody>
                     </table>
@@ -254,7 +256,7 @@
                           </tr>
 
                           <tr v-for="(file,index) in form.attachments" :key="index">
-                            <td>{{file.filename}}</td>
+                            <td><a v-if="file.id != undefined" target="_blank" :href='"/attachments/approval/purchase/"+file.id+"."+file.filename.substr(file.filename.lastIndexOf(".") + 1)' class="text-primary text-underlined"><i class="fas fa-download"></i>&nbsp;{{file.filename}}</a><span v-if="file.id == undefined">{{file.filename}}</span></td>
                             <td>{{file.size}}</td>
                             <td class="text-right py-0 align-middle">
                               <div class="btn-group btn-group-sm">
@@ -264,15 +266,15 @@
                           </tr></tbody>
                       </table>
                 </div>
-                <div class="col-md-4">
+                <div v-show="form.isSubmitted == 0" class="col-md-4">
                     <button @click.prevent="updateData()" class="btn btn-danger btn-block">update</button>
                 </div>
 
-                <div class="col-md-4">
-                    <button @click="saveAndSubmitData()" class="btn btn-success btn-block">submit</button>
+                <div v-show="form.isSubmitted == 0" class="col-md-4">
+                    <button @click="submitData()" class="btn btn-warning btn-block">submit</button>
                 </div>
-                <div class="col-md-4">
-                    <a href="#" target="_blank" class="btn btn-secondary btn-block"><i class="fas fa-print"></i> Print</a>
+                <div class="col-md-4" v-show="form.isSubmitted == 1">
+                    <a :href="'/approval/purchase/print/'+form.id" target="_blank" class="btn btn-secondary btn-block"><i class="fas fa-print"></i> Print</a>
                 </div>
             </div>
         </div>
@@ -302,12 +304,14 @@
                     purpose: '',
                     supplierId:'',
                     items:[
-                        {MaterialName: '', unit: '', quantity: '0', unp: '', amount:'0'}
+                        {MaterialName: '', unit: '', quantity: '0', unp: '', amount:'0', mark: ''}
                     ],
                     termOfPayment:'',
                     paymentMethod: '',
                     normalLines:[{user_id: ''}],
-                    forcedLines:[]
+                    forcedLines:[],
+                    KRW: 0,
+                    isSubmitted: null
                 }),
                 normalLineOrigin:[],
                 itemChanged: false,
@@ -399,7 +403,7 @@
 
             },
             addNewItem() {
-                this.form.items.push({MaterialName: '', unit: '', quantity: '0', unp: '', amount: '0'})
+                this.form.items.push({MaterialName: '', unit: '', quantity: '0', unp: '', amount: '0', mark: ''})
             },
             addNormalLine(){
                 this.form.normalLines.push({user_id: ''});
@@ -429,6 +433,25 @@
                         this.$Progress.finish(); 
                     })
                     .catch(() => {
+                        this.$Progress.fail();
+                    })
+                }
+            },
+            submitData(){
+                this.form.isSubmitted = true
+                if(this.checkForm()){
+                    this.$Progress.start();
+                    this.form.put('/purchases/'+this.form.id)
+                    .then(({data}) => {
+                        swal.fire(
+                            'Submitted!',
+                        'Request has been submitted!',
+                        'success'
+                        )
+                        this.$Progress.finish(); 
+                    })
+                    .catch(() => {
+                        this.form.isSubmitted = false
                         this.$Progress.fail();
                     })
                 }
@@ -494,3 +517,9 @@
         }
     }
 </script>
+<style scope>
+    .vs__dropdown-toggle {
+        border: 0px;
+        margin-top: -4px;
+    }
+</style>

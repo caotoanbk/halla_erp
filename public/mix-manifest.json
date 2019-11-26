@@ -1,6 +1,8 @@
 {
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
+    "/js/approval/paymentplan/edit.js": "/js/approval/paymentplan/edit.js",
     "/js/approval/purchase/create-purchase.js": "/js/approval/purchase/create-purchase.js",
+    "/js/approval/purchase/show-purchase.js": "/js/approval/purchase/show-purchase.js",
     "/js/approval/purchase/update-purchase.js": "/js/approval/purchase/update-purchase.js"
 }

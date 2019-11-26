@@ -12,7 +12,8 @@ class Purchaseitem extends Model
         'unit',
         'quantity',
         'unp',
-        'amount'
+        'amount',
+        'mark'
     ];
 
     protected $hidden = [

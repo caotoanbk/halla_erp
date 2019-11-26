@@ -46,6 +46,20 @@ Route::prefix('approval')->group(function(){
     Route::get('/{approvaltype}/create', 'ApprovalController@create');
     
     Route::get('/{approvaltype}/update/{id}', 'ApprovalController@update');
+
+    Route::get('/{approvaltype}/show/{id}', 'ApprovalController@show');
+
+    Route::get('/{approvaltype}/print/{id}', 'ApprovalController@print');
+
+    Route::post('/paymentplan', 'PaymentplanController@store');
+
+    Route::get('/paymentplan', 'PaymentplanController@index')->name('paymentplan.index');
+
+    Route::get('/paymentplan/edit/{id}', 'PaymentplanController@edit')->name('paymentplan.index');
+
+    Route::get('/exrate', 'ApprovalController@exRate')->name('approval.exrate');
+
+    Route::post('/exrate', 'ApprovalController@storeExrate');
 });
 
 Route::prefix('crud')->group(function(){
@@ -70,6 +84,18 @@ Route::prefix('crud')->group(function(){
 
 Route::get('api/get-purchase-approval-data', 'ApprovalController@getPurchaseConfigData');
 Route::get('api/get-purchase-approval-data/{id}', 'ApprovalController@getPurchaseData');
+Route::get('api/purchase-show-data/{id}', 'ApprovalController@getPurchaseShowData');
+
+Route::get('api/get-paymentplan-data/{id}', 'ApprovalController@getPaymentplanData');
+
+Route::put('api/update-line-purchase-comment/{id}', 'PurchaseController@updateLineComment');
+Route::put('api/update-line-status/{id}', 'PurchaseController@updateLineStatus');
+Route::delete('api/purchase-bank-payment/{id}', 'ApprovalController@deletePurchaseBankPayment');
+Route::put('api/add-purchase-to-bank/{payment_id}/{bank_id}', 'ApprovalController@addBankToPayment');
+
+Route::get('test', function(){
+    return view('test');
+});
 
 Auth::routes();
 

@@ -131,6 +131,12 @@
             <i class="fas fa-long-arrow-alt-right"></i>
             <span>Cash Group</span></a>
           </li>
+
+          <li class="nav-item">
+            <a class="nav-link  @if(strpos(\URL::current(),"/crud/bank") !== false) hoatdong @endif" href="/crud/bank" style="Padding:5px 16px;color:white;">
+            <i class="fas fa-long-arrow-alt-right"></i>
+            <span>Bank Account</span></a>
+          </li>
           
         </ul>
       </nav>

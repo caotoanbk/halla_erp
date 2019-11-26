@@ -8,6 +8,8 @@ use App\Purchaseitem;
 use Illuminate\Http\Request;
 use App\Purchaserequest;
 use App\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class PurchaseController extends Controller
 {
@@ -47,6 +49,18 @@ class PurchaseController extends Controller
     
     }
 
+    public function getNumberOfPurchases()
+    {
+        $count = Purchaserequest::count();
+        if($count < 10)
+            return '000'.$count;
+        if($count >= 10 && $count < 100)
+            return '00'.$count;
+        if(count >= 100 && $count < 1000)
+            return '0'.$count;
+        return $count;
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -56,7 +70,8 @@ class PurchaseController extends Controller
     public function store(Request $request)
     {
         //store purchase request
-        $purchase = Purchaserequest::create($request->all());
+        $docNumber = 'HEV-'.$this->getNumberOfPurchases().'-'.date('ymd');
+        $purchase = Purchaserequest::create(array_merge($request->all(), ['docNumber' => $docNumber, 'userId' => Auth::id()]));
         //store purchase item
         $items = $request->get('items');
         foreach ($items as $key => $item) {
@@ -67,6 +82,7 @@ class PurchaseController extends Controller
             $purchaseItem->quantity = $item['quantity'];
             $purchaseItem->unp = $item['unp'];
             $purchaseItem->amount = $item['amount'];
+            $purchaseItem->mark = $item['mark'];
             $purchaseItem->save();
         }
 
@@ -162,6 +178,7 @@ class PurchaseController extends Controller
             $purchaseItem->quantity = $item['quantity'];
             $purchaseItem->unp = $item['unp'];
             $purchaseItem->amount = $item['amount'];
+            $purchaseItem->mark = $item['mark'];
             $purchaseItem->save();
         }
 
@@ -261,8 +278,44 @@ class PurchaseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function updateLineComment($id, Request $request)
     {
-        //
+        $line = Linepurchase::find($id);
+        if($line)
+        {
+            if($request->get('data'))
+            {
+                $line->comment = $request->get('data');
+                $line->save();
+            }
+        }
+    }
+
+    public function updateLineStatus($id, Request $request)
+    {
+        $line = Linepurchase::find($id);
+        if($line)
+        {
+            $originStatus = $line->status;
+            if($request->get('status'))
+            {
+                $line->status = $request->get('status');
+                $line->action_date = Carbon::now();
+                $line->save();
+
+                // update in progress status
+                if($request->get('status') == '1' && $originStatus != 1)
+                {
+                    $nextLine = $line->purchaseRequest()->first()->lines()->where('id', '>', $id)->first();
+                    if($nextLine)
+                    {
+                        $nextLine->status = 3;
+                        $nextLine->save();
+                    }
+                }
+
+                return $line->action_date;
+            }
+        }
     }
 }

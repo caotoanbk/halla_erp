@@ -11,11 +11,22 @@ class Linepurchase extends Model
         'user_id',
         'type',
         'status',
-        'comment'
+        'comment',
+        'action_date'
     ];
 
     protected $hidden = [
         'created_at',
         'updated_at'
     ];
+
+    public function purchaseRequest()
+    {
+        return $this->belongsTo('App\Purchaserequest', 'purchaserequest_id');
+    }
+
+    public function employee()
+    {
+        return $this->belongsTo('App\Employee', 'user_id');
+    }
 }

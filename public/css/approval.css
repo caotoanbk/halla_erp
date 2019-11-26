@@ -35,6 +35,10 @@ table.tableitems, table.tableitems td, table.tableitems th {
     border: 1px solid #ced4da;
     padding: 4px;
 }
+table.tableitems-show, table.tableitems-show td, table.tableitems-show th {
+  border: 1px solid #4b4f53;
+  padding: 7px;
+}
 table.bankinfo, table.bankinfo td, table.bankinfo th {
     border: 1px solid var(--secondary);
     padding: 4px;
@@ -72,13 +76,13 @@ a{
 .form-control[readonly]{
     background-color: #fff;
 }
-.vs__dropdown-toggle {
-    border: 0px;
-    margin-top: -4px;
-}
 .vselect-input{
   border: 1px solid rgb(170,170,170);
 }
 .table.table-file-list th, .table.table-file-list td{
     padding: 0.35rem;
+}
+.vdp-datepicker__calendar {
+  margin-left: auto;
+  margin-right: auto;
 }

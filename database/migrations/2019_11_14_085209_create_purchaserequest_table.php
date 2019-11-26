@@ -17,6 +17,7 @@ class CreatePurchaserequestTable extends Migration
             $table->increments('id');
             $table->tinyInteger('purchaseType')->default(0);
             $table->integer('cashgroupId');
+            $table->string('docNumber')->nullable();
             $table->tinyInteger('numOfPayments')->default(0);
             $table->string('title');
             $table->string('paymentDate', 20);
@@ -24,9 +25,14 @@ class CreatePurchaserequestTable extends Migration
             $table->string('currency', 20);
             $table->string('purpose');
             $table->integer('supplierId');
+            $table->integer('userId');
             $table->string('termOfPayment');
             $table->string('paymentMethod');
+            $table->tinyInteger('isSubmitted')->default('0');
             $table->timestamps();
+            
+            // relationships
+            $table->foreign('userId')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

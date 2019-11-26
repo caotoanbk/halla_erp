@@ -12,7 +12,7 @@
         <div class="col-md-8">
             <div class="row">
                 <div class="col-xs-12 col-md-12">
-                    <h2 style="margin-top: 20px; margin-bottom: 10px;"><i class="fas fa-plus-circle"></i> 새로운 요청/ NEW PURCHASE REQUEST</h2>
+                    <h2 style="margin-top: 20px; margin-bottom: 10px;"><i v-if="editMode == false" class="fas fa-plus-circle"></i><i v-else class="fas fa-edit"></i> 새로운 요청/ <span v-if="editMode == false">NEW PURCHASE REQUEST</span><span v-else>UPDATE PURCHASE REQUEST - {{form.id}}</span></h2>
                 </div>
                 <div class="col-md-3">
                   <div class="input-group">
@@ -105,11 +105,12 @@
                         <tbody>
                             <tr>
                                 <td style="text-align:center;width: 9%;"><strong>품번/ Index </strong></td>
-                                <td style="text-align:center; width: 40%;"><strong>세부/ Detail </strong></td>
+                                <td style="text-align:center; width: 33%;"><strong>세부/ Detail </strong></td>
                                 <td style="text-align:center; width: 10%;"><strong>단위/ Unit </strong></td>
                                 <td style="text-align:center"><strong>수량/ Quantity </strong></td>
-                                <td style="text-align:center"><strong>단가/ UNP </strong></td>
-                                <td style="text-align:center;width: 13%;"><strong>금액/ Amount</strong></td>
+                                <td style="text-align:center; width: 10%;"><strong>단가/ UNP </strong></td>
+                                <td style="text-align:center;width: 17%;"><strong>비고/ Mark</strong></td>
+                                <td style="text-align:center;width: 12%;"><strong>금액/ Amount</strong></td>
 
                             </tr>
                             <tr v-for="(item,index) in this.form.items" :key="index">
@@ -125,35 +126,36 @@
                                 <td><input type="text" name="" style="width: 100%;" v-model="item.unit"></td>
                                 <td><input type="number" @change="calculateAmount(item)" name="" style="width: 100%;" v-model.number="item.quantity"></td>
                                 <td><money v-model="item.unp" v-bind="money" @keyup.native="calculateAmount(item)"></money></td>
+                                <td><input type="text" name="" style="width: 100%;" v-model="item.mark"></td>
                                 <td class="text-center">{{item.amount.toLocaleString('es-ES')}}</td>
-                                <td><a href="#" @click.prevent="removeItem(index)"><i class="fas fa-trash-alt red"></i></a></td>
+                                <td v-if="index > 0"><a href="#" @click.prevent="removeItem(index)"><i class="fas fa-trash-alt red"></i></a></td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td style="height:15.0pt; text-align:center; white-space:nowrap">&nbsp;</td>
                                 <td colspan="2" style="height:15.0pt; text-align:center">총금액/ Total</td>
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
+                            </tr> -->
+                            <tr>
+                                <td style="height:15.0pt; text-align:center; white-space:nowrap">&nbsp;</td>
+                                <td colspan="5" style="height:15.0pt; text-align:center">총금액 ( VAT전)/ Amount before VAT</td>
+                                <td>{{amountBeforeVAT.toLocaleString('es-ES')}}</td>
                             </tr>
                             <tr>
                                 <td style="height:15.0pt; text-align:center; white-space:nowrap">&nbsp;</td>
-                                <td colspan="4" style="height:15.0pt; text-align:center">총금액 ( VAT전)/ Amount before VAT</td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td style="height:15.0pt; text-align:center; white-space:nowrap">&nbsp;</td>
-                                <td colspan="4" style="height:15.0pt; text-align:center">VAT(%)</td>
+                                <td colspan="5" style="height:15.0pt; text-align:center">VAT(%)</td>
                                 <td><input type="number" style="width: 100%;" v-model.number="VATratio"></td>
                             </tr>
                             <tr>
                                 <td style="height:15.0pt; text-align:center; white-space:nowrap">&nbsp;</td>
-                                <td colspan="4" style="height:15.0pt; text-align:center">총지불/ Total Payment (VND)</td>
+                                <td colspan="5" style="height:15.0pt; text-align:center">총지불/ Total Payment (VND)</td>
                                 <td>{{(amountBeforeVAT + amountBeforeVAT * VATratio / 100).toLocaleString('es-ES')}}</td>
                             </tr>
                             <tr>
                                 <td style="height:15.0pt; text-align:center; white-space:nowrap">&nbsp;</td>
-                                <td colspan="4" style="height:15.0pt; text-align:center">KRW</td>
-                                <td>&nbsp;</td>
+                                <td colspan="5" style="height:15.0pt; text-align:center">KRW</td>
+                                <td><money v-model="form.KRW" v-bind="money"></money></td>
                             </tr>
                         </tbody>
                     </table>
@@ -259,15 +261,15 @@
                       </table>
                 </div>
                 <div class="col-md-4">
-                    <button v-if="!editMode" @click.prevent="saveData()" class="btn btn-warning btn-block">save</button>
-                    <button v-else @click.prevent="updateData()" class="btn btn-warning btn-block">update</button>
+                    <button :disabled="form.isSubmitted" v-if="!editMode" @click.prevent="saveData()" class="btn btn-warning btn-block">save</button>
+                    <button :disabled="form.isSubmitted" v-else @click.prevent="updateData()" class="btn btn-warning btn-block">update</button>
                 </div>
 
                 <div class="col-md-4">
-                    <button @click="saveAndSubmitData()" class="btn btn-success btn-block">submit</button>
+                    <button :disabled="!form.id" @click="submitData()" class="btn btn-success btn-block">submit</button>
                 </div>
                 <div class="col-md-4">
-                    <a href="#" target="_blank" class="btn btn-secondary btn-block"><i class="fas fa-print"></i> Print</a>
+                    <a v-if="form.id" :href="'/approval/purchase/print/' + form.id" target="_blank" class="btn btn-secondary btn-block"><i class="fas fa-print"></i> Print</a>
                 </div>
             </div>
         </div>
@@ -287,7 +289,7 @@
                     id: null,
                     purchaseType: '1',
                     cashgroupId:'',
-                    numOfPayments: 0,
+                    numOfPayments: 1,
                     title:'',
                     paymentDate:'',
                     receiveDate:'',
@@ -296,14 +298,16 @@
                     purpose: '',
                     supplierId:'',
                     items:[
-                        {MaterialName: '', unit: '', quantity: '0', unp: '', amount:'0'}
+                        {MaterialName: '', unit: '', quantity: '0', unp: '', amount:'0', mark: ''}
                     ],
                     termOfPayment:'',
                     paymentMethod: '',
                     normalLines:[{user_id: ''}],
-                    forcedLines:[]
+                    forcedLines:[],
+                    KRW: 0,
+                    isSubmitted: false
                 }),
-                itemChanged: false,
+                // itemChanged: false,
                 errors: [],
                 editMode: false,
                 VATratio:0,
@@ -392,7 +396,7 @@
 
             },
             addNewItem() {
-                this.form.items.push({MaterialName: '', unit: '', quantity: '0', unp: '', amount: '0'})
+                this.form.items.push({MaterialName: '', unit: '', quantity: '0', unp: '', amount: '0', mark: ''})
             },
             addNormalLine(){
                 this.form.normalLines.push({user_id: ''});
@@ -445,6 +449,25 @@
                     })
                 }
             },
+            submitData(){
+                this.form.isSubmitted = true
+                if(this.checkForm()){
+                    this.$Progress.start();
+                    this.form.put('/purchases/'+this.form.id)
+                    .then(({data}) => {
+                        swal.fire(
+                            'Submitted!',
+                        'Request has been submitted!',
+                        'success'
+                        )
+                        this.$Progress.finish(); 
+                    })
+                    .catch(() => {
+                        this.form.isSubmitted = false
+                        this.$Progress.fail();
+                    })
+                }
+            },
             onSupplierChange() {
                 this.currentSelectSupplier = this.supplierOptions.filter((item) => {
                     return this.form.supplierId === item.id;
@@ -481,14 +504,14 @@
                 return this.form.items.reduce((acc, item) => acc + parseFloat(item.amount), 0)
             }
         },
-        watch: {
-            // 'form.items': function(newVal, oldVal){
-            //     if(this.editMode)
-            //         this.itemChanged = true;
-            // }
-        },
         components: {
             Datepicker
         }
     }
 </script>
+<style scope>
+    .vs__dropdown-toggle {
+        border: 0px;
+        margin-top: -4px;
+    }
+</style>

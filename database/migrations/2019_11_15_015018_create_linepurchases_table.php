@@ -18,7 +18,8 @@ class CreateLinepurchasesTable extends Migration
             $table->integer('purchaserequest_id');
             $table->integer('user_id');
             $table->tinyInteger('type');
-            $table->tinyInteger('status');
+            $table->tinyInteger('status')->default(0);
+            $table->dateTime('action_date');
             $table->string('comment');
             $table->timestamps();
 
