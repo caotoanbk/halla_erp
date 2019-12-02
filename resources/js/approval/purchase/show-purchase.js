@@ -2,6 +2,9 @@ window.Vue = require('vue');
 import moment from 'moment';
 import { Form, HasError, AlertError } from 'vform'
 
+import "babel-polyfill"
+import 'whatwg-fetch'
+
 import vSelect from 'vue-select'
 Vue.component('v-select', vSelect)
 
@@ -18,7 +21,7 @@ Vue.filter('myDate', function(created) {
   if(created)
     return moment(created).format('YYYY-MM-DD HH:mm:ss');
   return ''
-});
+})
 window.toast = toast
 window.Form = Form
 

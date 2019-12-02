@@ -41,7 +41,7 @@ class ApprovalController extends Controller
 
     public function show($approvaltype, $id)
     {
-        if($approvaltype != 'purchase' && $approvaltype != 'paymentplan')
+        if($approvaltype != 'purchase')
         {
             return abort('404');
         }
@@ -75,8 +75,8 @@ class ApprovalController extends Controller
         $suppliers = Supplier::orderBy('created_at', 'desc')->get();
         $cashgroups = Cashgroup::orderBy('created_at', 'desc')->get();
         $materials = Material::orderBy('MaterialName', 'asc')->get();
-        $users = User::with('employee')->get();
-        $forcedLines = User::where('forced_line', true)->orderBy('sortIndex', 'asc')->with('employee')->get();
+        $users = User::all();
+        $forcedLines = User::where('forced_line', true)->orderBy('sortIndex', 'asc')->get();
         return collect([
             'suppliers' => $suppliers, 
             'cashgroups' => $cashgroups, 
@@ -93,8 +93,8 @@ class ApprovalController extends Controller
         $suppliers = Supplier::orderBy('created_at', 'desc')->get();
         $cashgroups = Cashgroup::orderBy('created_at', 'desc')->get();
         $materials = Material::orderBy('MaterialName', 'asc')->get();
-        $users = User::where('forced_line', null)->with('employee')->get();
-        $forcedLines = User::where('forced_line', true)->orderBy('sortIndex', 'asc')->with('employee')->get();
+        $users = User::where('forced_line', null)->get();
+        $forcedLines = User::where('forced_line', true)->orderBy('sortIndex', 'asc')->get();
         return collect([
             'suppliers' => $suppliers, 
             'cashgroups' => $cashgroups, 
@@ -109,8 +109,8 @@ class ApprovalController extends Controller
     {
         $purchase = Purchaserequest::where('id', $id)->with('items')->with('lines')->with('files')->get();
 
-        $suppliers = Supplier::orderBy('created_at', 'desc')->get();
-        $cashgroups = Cashgroup::orderBy('created_at', 'desc')->get();
+        $suppliers = Supplier::all();
+        $cashgroups = Cashgroup::all();
         // $materials = Material::orderBy('MaterialName', 'asc')->get();
         $users = User::with('employee')->get();
 
@@ -125,11 +125,12 @@ class ApprovalController extends Controller
 
     public function getPaymentplanData($id)
     {
-        $payment = Paymentplan::where('id', $id)->with('payment_bank_purchases')->get();
+        $payment = Paymentplan::where('id', $id)->with('payment_bank_purchases')->with('lines')->get();
         $purchaseRequests = Purchaserequest::where('isSubmitted', true)->get()->each(function($item){
             $item->append('total_amount_format');
             $item->append('supplier_name');
         });
+        $users = User::with('employee')->get();
         $banks = Bank::orderBy('BankName', 'desc')->get()->groupBy('BankName');
         $rate = Exrate::orderBy('created_at', 'desc')->first();
 
@@ -137,7 +138,21 @@ class ApprovalController extends Controller
             'paymentplan' => $payment,
             'purchases' => $purchaseRequests,
             'banks' => $banks,
+            'users' => $users,
             'exrate' => $rate
+        ]);
+    }
+
+    public function getPaymentplanDataShow($id)
+    {
+        $payment = Paymentplan::where('id', $id)->with('payment_bank_purchases')->with('lines')->get();
+        $users = User::with('employee')->get();
+        $banks = Bank::orderBy('BankName', 'desc')->get()->groupBy('BankName');
+
+        return collect([
+            'paymentplan' => $payment,
+            'banks' => $banks,
+            'users' => $users
         ]);
     }
 

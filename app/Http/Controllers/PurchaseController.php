@@ -164,6 +164,8 @@ class PurchaseController extends Controller
     public function update(Request $request, $id)
     {
         $purchase = Purchaserequest::find($id);
+        if($purchase->isSubmitted)
+            return;
         $purchase->update($request->all());
 
         //update items
@@ -208,6 +210,13 @@ class PurchaseController extends Controller
                 'status' => 0,
                 'comment' => ''
                 ]);
+        }
+        if($purchase->isSubmitted){
+            $line = $purchase->lines()->orderBy('id', 'asc')->first();
+            if($line){
+                $line->status = 3;
+                $line->save();
+            }
         }
 
         // update attached files

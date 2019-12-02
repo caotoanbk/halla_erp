@@ -31,6 +31,15 @@ class Purchaserequest extends Model
         return $this->belongsTo('App\Cashgroup', 'cashgroupId');
     }
 
+    public function getCashgroupNameAttribute()
+    {
+        $cashgroup = $this->cashgroup()->first();
+        if($cashgroup){
+            return $cashgroup->CashgroupName;
+        }
+        return '';
+    }
+
     public function supplier()
     {
         return $this->belongsTo('App\Supplier', 'supplierId');
@@ -50,6 +59,15 @@ class Purchaserequest extends Model
         return $this->belongsTo('App\User', 'userId');
     }
 
+    public function getUserNameAttribute()
+    {
+        $user = $this->user()->first();
+        if($user){
+            return $user->UserName;
+        }
+        return ;
+    }
+
     public function getTotalAmountAttribute()
     {
         $total = 0;
@@ -61,5 +79,60 @@ class Purchaserequest extends Model
     public function getTotalAmountFormatAttribute()
     {
         return number_format($this->getTotalAmountAttribute(), 0);
+    }
+
+    public function isApproved()
+    {
+       $lines = $this->lines()->get();
+       foreach ($lines as $line) {
+            if($line->status != 1)
+            {
+                return false;
+            }
+       }
+       return true;
+    }
+
+    public function isRejected()
+    {
+        $lines = $this->lines()->get();
+       foreach ($lines as $line) {
+            if($line->status == 2)
+            {
+                return true;
+            }
+       }
+       return false;
+    }
+
+    public function currentLine()
+    {
+        $line = $this->lines()->where('status', 3)->first();
+        if($line){
+            return $line->user_id;
+        }
+
+    }
+    public function lineRejected()
+    {
+        $line = $this->lines()->where('status', 2)->first();
+        if($line){
+            return $line->user_id;
+        }
+    }
+    public function isGettingFinalApproval()
+    {
+        $line = $this->lines()->orderBy('id', 'desc')->first();
+        if($line){
+            if($line->status == 3){
+                return true;
+            }
+        }
+        return false;
+    }
+    public function checkContainLine($user_id)
+    {
+        $lines = $this->lines()->where('status', '!=', 0)->pluck('user_id')->all();
+        return in_array($user_id, $lines);
     }
 }

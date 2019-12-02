@@ -4,17 +4,15 @@
             <h3 class="text-center">
                 출금 계획 - Payment Plan
             </h3>
-            <p class="text-center">Date: <datepicker wrapper-class="d-inline-block" @input="form.date_payment = fixDate($event)" 
-            format="yyyy-MM-dd" v-model="form.date_payment" input-class=""></datepicker></p>
+            <p class="text-center">Date: {{form.date_payment}}</p>
             <table class="w-100 ml-3">
                 <tr>
                     <td>USD/KRW</td>
-                    <td><input type="number" step=".01" v-model="form.usd_krw" class="w-100"></td>
+                    <td>{{form.usd_krw}}</td>
                     <td>VND/KRW</td>
-                    <td><input type="number" step=".01" v-model="form.vnd_krw" class="w-100"></td>
+                    <td>{{form.vnd_krw}}</td>
                     <td>USD/VND</td>
-                    <td><input type="number" step=".01" v-model="form.usd_vnd" class="w-100"></td>
-                    <td class="text-center"><button class="btn btn-primary btn-sm" @click="loadNewestRate()">Load newest rate</button></td>
+                    <td>{{form.usd_vnd}}</td>
                 </tr>
             </table>
             <table class="w-100 ml-3 mt-3 table2">
@@ -47,9 +45,7 @@
                             <td>{{items[name][Object.keys(items[name])[0]][0].purchase_title}}</td>
                             <td style="text-align: right; padding: 5px">{{items[name][Object.keys(items[name])[0]][0].amount.toLocaleString('es-ES')}}</td>
                             <td class="text-center"><a target="_blank" :href="'/approval/purchase/show/'+items[name][Object.keys(items[name])[0]][0].purchaserequest_id">
-                            {{items[name][Object.keys(items[name])[0]][0].purchase_docno}}</a>
-                            &nbsp;<a href="#" @click.prevent="removePurchaseBank(items[name][Object.keys(items[name])[0]][0].id)" class="text-danger">
-                                <i class="fas fa-times-circle"></i></a></td>
+                            {{items[name][Object.keys(items[name])[0]][0].purchase_docno}}</a></td>
                         </tr>
                         <template v-for="(val,name, index1) in value">
                             <tr :key="name" v-if="index1 > 0">
@@ -58,7 +54,7 @@
                                 <td>{{val[0].supplier_name}}</td>
                                 <td>{{val[0].purchase_title}}</td>
                                 <td style="text-align: right; padding: 5px">{{val[0].amount.toLocaleString('es-ES')}}</td>
-                                <td class="text-center"><a target="_blank" :href="'/approval/purchase/show/'+val[0].purchaserequest_id">{{val[0].purchase_docno}}</a>&nbsp;<a href="#" @click.prevent="removePurchaseBank(val[0].id)" class="text-danger"><i class="fas fa-times-circle"></i></a></td>
+                                <td class="text-center"><a target="_blank" :href="'/approval/purchase/show/'+val[0].purchaserequest_id">{{val[0].purchase_docno}}</a></td>
                             </tr>
                             <template v-for="(item,index2) in val">
                                 <tr :key="item.id" v-if="index2 > 0">
@@ -66,7 +62,7 @@
                                     <td>{{item.supplier_name}}</td>
                                     <td>{{item.purchase_title}}</td>
                                     <td style="text-align: right; padding: 5px">{{item.amount.toLocaleString('es-ES')}}</td>
-                                    <td class="text-center"><a target="_blank" :href="'/approval/purchase/show/'+item.purchaserequest_id">{{item.purchase_docno}}</a>&nbsp;<a href="#" @click.prevent="removePurchaseBank(item.id)" class="text-danger"><i class="fas fa-times-circle"></i></a></td>
+                                    <td class="text-center"><a target="_blank" :href="'/approval/purchase/show/'+item.purchaserequest_id">{{item.purchase_docno}}</a></td>
                                 </tr>
                             </template>
                             <tr>
@@ -121,53 +117,49 @@
             </table>
         </div>
         <div class="col-md-4">
-            <h4>윤곽 - Lines</h4>
-            <p v-if="filteredLines.length == 0" class="d-inline-block bg-danger p-1">No lines selected</p>
+            <h4>Line comment</h4>
+            <template v-for="(line,index) in form.lines">
+                <div v-if="line.status == '3' && line.user_id == current_user_id" :key="line.id">
+                    <textarea name="" id="" cols="30" rows="3" class="form-control" v-model="line.comment"></textarea>
+                    <div class="my-2 row">
+                        <div class="col-md-6"><button class="btn btn-success btn-block" @click="approvePayment(line,index)">Approve</button></div>
+                        <div class="col-md-6"><button class="btn btn-danger btn-block" @click="rejectPayment(line,index)">Reject</button></div>
+                    </div>
+                </div>
+            </template>
             <div class="row">
                 <div class="col-md-12">
-                    <template v-if="form.lines.length > 0">
-                        <div class="form-group mb-1 lines" v-for="(line, index) in form.lines" :key="index">
-                            <template v-if="usersOptions">
-                                <v-select 
-                                :placeholder="'line ' + (index+1)"
-                                :options="usersOptions" 
-                                :getOptionLabel="u => (u.employee_opt_name)" 
-                                v-model="line.user_id"
-                                :reduce="user => user.id + ''" 
-                                class="form-control" />
+                    <table class="w-100">
+                        <thead>
+                            <tr class="text-center" style="background-color: #f2dcdb;">
+                                <th>Line</th>
+                                <th>PIC</th>
+                                <th>Position</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                                <th>Comment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template v-if="usersOptions.length > 0">
+                            <tr v-for="(line,index) in form.lines" :key="line.id">
+                                <td>{{index+1}}</td>
+                                <td>{{findUser(parseInt(line.user_id)).employee.EmployeeName}}</td>
+                                <td>{{findUser(parseInt(line.user_id)).employee.EmployeeInformation}}</td>
+                                <td v-if="line.status == '1'" class="bg-success text-center">Approved</td>
+                                <td v-else-if="line.status == '2'" class="bg-danger text-center">Rejected</td>
+                                <td v-else class="bg-warning text-center">In Progress</td>
+                                <td>{{line.action_date|myDate}}</td>
+                                <td v-if="line.status == '1' || line.status == '2'">
+                                    <textarea cols="30" rows="2" v-model="line.comment" class="form-control"></textarea>
+                                    <button class="btn btn-primary btn-sm">update comment</button>
+                                </td>
+                                <td v-else>{{line.comment}}</td>
+                            </tr>
                             </template>
-                        </div>
-                    </template>
-                    <div class="mb-1" v-if="!form.is_submit">
-                        <a class="text-info" href="#" @click="addNewLine()"><i class="fas fa-plus"></i>&nbsp;Add new line</a>
-                        &nbsp;|&nbsp;
-                        <a class="text-danger" v-if="form.lines.length > 0" href="#" @click="removeLastLine()"><i class="fas fa-times"></i>&nbsp;Remove last line</a>
-                    </div>
-
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-            <template v-if="!this.form.is_submit">
-            <h4 class="mt-3">선택 요청 - Select request</h4>
-            <template v-if="purchaseOptions">
-            <v-select multiple
-                :options="purchaseOptions" 
-                :getOptionLabel="u => (u.docNumber + ' # ' + u.supplier_name + ' # ' + u.total_amount_format + ' # ' + u.title )"  
-                :reduce="purchase => purchase.id" 
-                v-model="selectedPurchases"
-            />
-            </template>
-            <div class="mt-4 pt-3">
-                <template v-for="(bank,index) in banks" >
-                    <button @click.prevent="addToBank(b.id)" class="btn btn-block btn-outline-secondary" v-for="b in banks[index]" :key="b.id">Add {{index}} {{b.BankAccount}}</button>
-                </template>
-            </div>
-            </template>
-            <div v-if="!form.is_submit" class="mt-4">
-            <button class="btn btn-primary" @click.prevent="saveData()">Save</button>
-            <button class="btn btn-success" @click="submitData()">Finish &amp; send to lines</button>
-            </div>
-            <div v-else class="mt-4">
-                <h5 class="text-danger">THIS PAYMENT WERE SUBMITTED</h5>
             </div>
         </div>
     </div>
@@ -178,7 +170,7 @@
     import moment from 'moment';
 
     export default {
-        props: ['paymentplan_id'],
+        props: ['paymentplan_id', 'current_user_id'],
         data() {
             return {
                 form: new Form({
@@ -190,140 +182,47 @@
                     is_submit: null,
                     lines: [{id: null, user_id: ''}]
                 }),
-                purchaseOptions: null,
                 usersOptions: [],
-                selectedPurchases: [],
-                banks: null,
                 items: null,
                 paymentplan: null,
-                orignItems: null,
                 payment_bank_purchases:null,
-                errors: []
             }
         },
         methods: {
-            fixDate(event) {
-                return moment(event).format('YYYY-MM-DD')
+            findUser(id) {
+                return this.usersOptions.filter((item) => {
+                    return id === item.id
+                })[0]
             },
-            addNewLine(){
-                this.form.lines.push({user_id: null, id: null});
-            },
-            removeLastLine(){
-                this.form.lines.splice(this.form.lines.length -1, 1)
-            },
-            loadNewestRate(){
-                axios.get('/api/exrate/newest')
-                .then(({data}) => {
-                    if(data){
-                        this.form.usd_krw = parseFloat(data.usd_krw).toFixed(2)
-                        this.form.vnd_krw = parseFloat(data.vnd_krw).toFixed(2)
-                        this.form.usd_vnd = parseFloat(data.usd_vnd).toFixed(2)
-                    }
-                })
-                .catch(() => {
-
-                })
-            },
-            saveData(){
-                if(this.filteredLines.length > 0){
-                    this.$Progress.start();
-                    this.form.put('/api/paymentplan/'+this.paymentplan_id)
-                    .then(({data}) => {
-                        swal.fire(
-                            'Updated!',
-                        'Information has been updated.',
-                        'success'
-                        )
-                        this.$Progress.finish(); 
-                    })
-                    .catch(() => {
-                        this.$Progress.fail();
-                    })
-                }else{
-                    toast.fire({
-                        type: 'error',
-                        title: 'Lines not selected!'
-                    });
-                }
-            },
-            submitData(){
-                if(this.filteredLines.length > 0){
-                    this.$Progress.start()
-                    this.form.is_submit = true
-                    this.form.put('/api/paymentplan/'+this.paymentplan_id)
-                    .then(({data}) => {
-                        swal.fire(
-                            'Submitted!',
-                        'Payment has been submitted.',
-                        'success'
-                        )
-                        this.$Progress.finish(); 
-                    })
-                    .catch(() => {
-                        this.form.is_submit = false
-                        this.$Progress.fail();
-                    })
-                }else{
-                    toast.fire({
-                        type: 'error',
-                        title: 'Lines not selected!'
-                    });
-                }
-            },
-            addToBank(bank_id){
-                if(this.form.is_submit)
-                {
-                    return;
-                }
-                if(this.selectedPurchases.length == 0)
-                {
-                    toast.fire({
-                        type: 'error',
-                        title: 'None request to add!'
-                    });
-                    return;
-                }
+            approvePayment(line,index){
                 this.$Progress.start()
-                axios.put('/api/add-purchase-to-bank/' + this.paymentplan_id + '/'+bank_id, {data: this.selectedPurchases})
-                .then(({data}) => {
-                    this.paymentplan = data.paymentplan[0]
-                    this.payment_bank_purchases = data.paymentplan[0].payment_bank_purchases
-                    this.orignItems = _.groupBy(data.paymentplan[0].payment_bank_purchases, 'bank_name')
-                    this.items = _.groupBy(data.paymentplan[0].payment_bank_purchases, 'bank_name')
-                    for(const item in this.items){
-                        this.items[item] = _.groupBy(this.items[item], 'bank_account')
-                    }
-                    toast.fire({
-                        type: 'success',
-                        title: 'Add to bank successfully!'
-                    });
-                    this.selectedPurchases = []
-                    this.$Progress.finish()
+                axios.put("/api/update-line-payment-comment/"+line.id, {comment: line.comment, status: 1})
+                    .then((res) => {
+                        toast.fire({
+                            type: 'success',
+                          title: 'Approved!'
+                        });
+                        line.status = '1'
+                        if(this.form.lines[index+1]){
+                            this.form.lines[index+1].status = '3'
+                        }
+                        this.$Progress.finish()
+                    }).catch((err) => {
+                        line.status = '3'
                 })
-                .catch(() => {
-                    this.$Progress.fail()
-                })
-
             },
-            removePurchaseBank(id){
+            rejectPayment(line,index){
                 this.$Progress.start()
-                axios.delete('/api/purchase-bank-payment/'+id)
-                .then(({data}) => {
-                    this.paymentplan = data.paymentplan[0]
-                    this.payment_bank_purchases = data.paymentplan[0].payment_bank_purchases
-                    this.orignItems = _.groupBy(data.paymentplan[0].payment_bank_purchases, 'bank_name')
-                    this.items = _.groupBy(data.paymentplan[0].payment_bank_purchases, 'bank_name')
-                    for(const item in this.items){
-                        this.items[item] = _.groupBy(this.items[item], 'bank_account')
-                    }
-                    toast.fire({
-                        type: 'success',
-                        title: 'Deleted!'
-                    });
-                    this.$Progress.finish()
-                })
-                .catch((err) => {
-                    this.$Progress.fail()
+                axios.put("/api/update-line-payment-comment/"+line.id, {comment: line.comment, status: 2})
+                    .then((res) => {
+                        toast.fire({
+                            type: 'success',
+                          title: 'Rejected!'
+                        });
+                        line.status = '2'
+                        this.$Progress.finish()
+                    }).catch((err) => {
+                        line.status = '3'
                 })
             },
             calculateSubTotal(bank_id){
@@ -340,7 +239,7 @@
                 })
             },
             loadData(){
-                axios.get("/api/get-paymentplan-data/"+this.paymentplan_id)
+                axios.get("/api/get-paymentplan-data-show/"+this.paymentplan_id)
                 .then(({data}) => {
                     this.form.fill(data.paymentplan[0])
                     this.paymentplan = data.paymentplan[0]
@@ -378,11 +277,6 @@
         mounted() {
         },
         computed: {
-            filteredLines(){
-                return this.form.lines.filter((item) => {
-                    return item.user_id != null
-                })
-            }
         },
         components: {
             Datepicker

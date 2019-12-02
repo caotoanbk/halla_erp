@@ -17,6 +17,10 @@ class CreatePaymentplansTable extends Migration
             $table->increments('id');
             $table->date('date_payment');
             $table->integer('user_id');
+            $table->float('usd_krw')->nullable();
+            $table->float('vnd_krw')->nullable();
+            $table->float('usd_vnd')->nullable();
+            $table->tinyInteger('is_submit')->nullable();
             $table->string('docno');
             $table->timestamps();
 

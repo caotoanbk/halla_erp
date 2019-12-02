@@ -2,6 +2,9 @@ window.Vue = require('vue');
 import moment from 'moment';
 import { Form, HasError, AlertError } from 'vform'
 
+import "babel-polyfill"
+import 'whatwg-fetch'
+
 import vSelect from 'vue-select'
 Vue.component('v-select', vSelect)
 

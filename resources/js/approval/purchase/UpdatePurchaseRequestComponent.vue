@@ -1,5 +1,5 @@
 <template>
-    <div class="row m-0 pb-4">
+    <div class="row m-0 pb-4 w-100">
         <div class="col-12 pt-3 mb-0 alert alert-danger alert-dismissible fade show" v-if="errors.length">
             <b>Please correct the following error(s):</b>
             <ul class="m-0">
@@ -203,31 +203,28 @@
             <div class="lineapp row">
                 <div class="col-md-12">
                     <p class="mb-1" v-for="(line,index) in normalLineOrigin" :key="index">
-                        {{findUser(parseInt(line.user_id)).employee.EmployeeName + ' - ' + findUser(parseInt(line.user_id)).employee.EmployeeInformation}}
+                        {{findUser(parseInt(line.user_id)).employee_opt_name}}
                     </p>
                     <div class="mb-2" v-for="(line,index) in form.normalLines" :key="line.id">
                         <v-select 
                         :placeholder="'line ' + (index + 1)"
                         :options="usersOptions" 
                         v-model="line.user_id"
-                        :getOptionLabel="u => (u.employee.EmployeeName + ' - ' +u.employee.EmployeeInformation)" 
-                        :reduce="user => user.id" 
+                        :getOptionLabel="u => (u.employee_opt_name)" 
+                        :reduce="user => user.id+''" 
                         class="form-control" />
                     </div>
-                    <div class="" v-if="normalLineOrigin.length == 0">
+                    <div class="">
                         <a class="text-info" href="#" @click="addNormalLine()">Add new line</a>
                         &nbsp;|&nbsp;
                         <a class="text-danger" href="#" @click="removeNormalLine()">Remove last line</a>
-                    </div>
-                    <div v-else>
-                        <a class="text-info" href="#" @click="normalLineOrigin = []">Edit lines</a>
                     </div>
 
                 </div>
 
                 <div class="col-md-12">
                     <div v-for="forcedLine in form.forcedLines" :key="forcedLine.id">
-                        <p class="bg-secondary" style="padding: 2px; margin-bottom: 5px;">{{forcedLine.employee.EmployeeName + ' - '+ forcedLine.employee.EmployeeInformation }}</p>
+                        <p class="bg-secondary" style="padding: 2px; margin-bottom: 5px;">{{forcedLine.employee_opt_name}}</p>
                     </div>
 
                 </div>
@@ -487,7 +484,7 @@
                     this.form.fill(data.curPur[0])
                     this.form.forcedLines = data.forcedLines;
                     this.form.normalLines = []
-                    this.normalLineOrigin = data.curPur[0].lines.filter((item) => {
+                    this.form.normalLines = data.curPur[0].lines.filter((item) => {
                         return item.type == null
                     })
 

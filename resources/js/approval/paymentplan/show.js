@@ -1,6 +1,6 @@
 window.Vue = require('vue');
 import moment from 'moment';
-import { Form, HasError, AlertError } from 'vform'
+import { Form } from 'vform'
 
 import "babel-polyfill"
 import 'whatwg-fetch'
@@ -10,6 +10,14 @@ Vue.component('v-select', vSelect)
 
 import swal from 'sweetalert2'
 window.swal = swal
+
+Vue.filter('myDate', function(created) {
+  if(created)
+    return moment(created).format('YYYY-MM-DD HH:mm:ss');
+  return ''
+});
+
+window._ = require('lodash')
 
 const toast = swal.mixin({
   toast: true,
@@ -24,9 +32,6 @@ window.Form = Form
 window.axios = require('axios');
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-Vue.component(HasError.name, HasError)
-Vue.component(AlertError.name, AlertError)
-Vue.component('pagination', require('laravel-vue-pagination'));
 
 import VueProgressBar from 'vue-progressbar'
 Vue.use(VueProgressBar, {
@@ -38,11 +43,11 @@ Vue.use(VueProgressBar, {
 import money from 'v-money'
 Vue.use(money, {precision: 4})
 
-import UpdatePurchaseRequestComponent from './UpdatePurchaseRequestComponent.vue';
+import ShowPaymentplanComponent from './ShowPaymentplanComponent.vue'
 
 const app = new Vue({
     el: '#approval_app',
     components: { 
-        'update-purchase-request': UpdatePurchaseRequestComponent
+        'show-paymentplan': ShowPaymentplanComponent
     },
 });

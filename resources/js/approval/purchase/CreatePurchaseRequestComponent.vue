@@ -1,5 +1,5 @@
 <template>
-    <div class="row m-0 pb-4">
+    <div class="row m-0 pb-4 w-100">
         <div class="col-12 pt-3 mb-0 alert alert-danger alert-dismissible fade show" v-if="errors.length">
             <b>Please correct the following error(s):</b>
             <ul class="m-0">
@@ -105,10 +105,10 @@
                         <tbody>
                             <tr>
                                 <td style="text-align:center;width: 9%;"><strong>품번/ Index </strong></td>
-                                <td style="text-align:center; width: 33%;"><strong>세부/ Detail </strong></td>
+                                <td style="text-align:center; width: 40%;"><strong>세부/ Detail </strong></td>
                                 <td style="text-align:center; width: 10%;"><strong>단위/ Unit </strong></td>
                                 <td style="text-align:center"><strong>수량/ Quantity </strong></td>
-                                <td style="text-align:center; width: 10%;"><strong>단가/ UNP </strong></td>
+                                <td style="text-align:center; width: 8%;"><strong>단가/ UNP </strong></td>
                                 <td style="text-align:center;width: 17%;"><strong>비고/ Mark</strong></td>
                                 <td style="text-align:center;width: 12%;"><strong>금액/ Amount</strong></td>
 
@@ -207,7 +207,7 @@
                         :placeholder="'line ' + (index+1)"
                         :options="usersOptions" 
                         v-model="line.user_id"
-                        :getOptionLabel="u => (u.employee.EmployeeName + ' - ' + u.employee.EmployeeInformation)" 
+                        :getOptionLabel="u => (u.employee_opt_name)" 
                         :reduce="user => user.id" 
                         class="form-control" />
                     </div>
@@ -221,7 +221,7 @@
 
                 <div class="col-md-12">
                     <div v-for="forcedLine in form.forcedLines" :key="forcedLine.id">
-                        <p class="bg-secondary" style="padding: 2px; margin-bottom: 5px;">{{forcedLine.employee.EmployeeName + ' - '+ forcedLine.employee.EmployeeInformation }}</p>
+                        <p class="bg-secondary" style="padding: 2px; margin-bottom: 5px;">{{forcedLine.employee_opt_name }}</p>
                     </div>
 
                 </div>
@@ -266,10 +266,10 @@
                 </div>
 
                 <div class="col-md-4">
-                    <button :disabled="!form.id" @click="submitData()" class="btn btn-success btn-block">submit</button>
+                    <button :disabled="form.isSubmitted || !form.id" @click="submitData()" class="btn btn-success btn-block">submit</button>
                 </div>
                 <div class="col-md-4">
-                    <a v-if="form.id" :href="'/approval/purchase/print/' + form.id" target="_blank" class="btn btn-secondary btn-block"><i class="fas fa-print"></i> Print</a>
+                    <a v-if="form.id && form.isSubmitted" :href="'/approval/purchase/print/' + form.id" target="_blank" class="btn btn-secondary btn-block"><i class="fas fa-print"></i> Print</a>
                 </div>
             </div>
         </div>

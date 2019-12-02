@@ -313,7 +313,9 @@
                     line.action_date = res.data
                     if(line.status == '1')
                     {
-                        this.form.lines[index+1].status = '3'
+                        if(this.form.lines[index+1]){
+                            this.form.lines[index+1].status = '3'
+                        }
                     }
                 })
             },
@@ -366,7 +368,7 @@
             }
 
         },
-        created() {
+        mounted() {
             this.loadData();
         },
         computed: {

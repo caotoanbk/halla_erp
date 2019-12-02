@@ -60,9 +60,9 @@
 @endsection
 @section('js')
 <script>
-    $usd_krw = {{ $rates->first()->usd_krw }};
-    $vnd_krw = {{ $rates->first()->vnd_krw }};
-    $usd_vnd = {{ $rates->first()->usd_vnd }};
+    $usd_krw = {{ $rates->first() ? $rates->first()->usd_krw : 1 }};
+    $vnd_krw = {{ $rates->first() ? $rates->first()->vnd_krw : 1 }};
+    $usd_vnd = {{ $rates->first() ? $rates->first()->usd_vnd : 1 }};
     $('#usd_val').bind('keyup mouseup', function(){
         $vnd = parseFloat($(this).val()) * $usd_vnd;
         $('#vnd_val').val($vnd);
