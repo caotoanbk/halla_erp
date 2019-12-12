@@ -41,11 +41,20 @@ Route::prefix('approval')->group(function(){
 
         return redirect()->route('approval.dashboard');
     });
+
+    Route::get('/purchase/data', 'ApprovalController@purchaseDatatable')->name('approval.purchase.data');
+
     Route::get('/dashboard', 'ManageController@approvalHome')->name('approval.dashboard');
+
+    Route::get('/payment_dashboard', 'ManageController@approvalPaymentHome')->name('approval.payment_dashboard');
+
+    Route::get('/search', 'ManageController@search')->name('approval.search');
 
     Route::get('/paymentplan/edit/{id}', 'PaymentplanController@edit')->name('paymentplan.edit');
 
     Route::get('/paymentplan/show/{id}', 'PaymentplanController@show')->name('paymentplan.show');
+
+    Route::get('/paymentplan/print/{id}', 'PaymentplanController@print')->name('paymentplan.print');
     
     Route::get('/{approvaltype}/create', 'ApprovalController@create');
     

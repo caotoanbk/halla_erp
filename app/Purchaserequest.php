@@ -135,4 +135,9 @@ class Purchaserequest extends Model
         $lines = $this->lines()->where('status', '!=', 0)->pluck('user_id')->all();
         return in_array($user_id, $lines);
     }
+
+    public function getNumberOfLinePassed()
+    {
+        return ($this->lines()->count() - $this->lines()->where('status', 0)->count());
+    }
 }

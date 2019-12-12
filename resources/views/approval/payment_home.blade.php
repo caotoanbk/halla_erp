@@ -14,7 +14,7 @@
 
     </li>
     <li class="list-group-item" style="padding:5px;"> 
-    <strong><a href="{{route('approval.payment_dashboard', ['q' => 'total_payment_receive'])}}">Payment Plan Receive: {{$total_payment_receive->count()}}</a></strong>
+    <strong><a href="{{route('approval.payment_dashboard', ['q' => 'total_payment_receive'])}}">Payment Plan Receive : {{$total_payment_receive->count()}}</a></strong>
       <ul class="list-group" style="margin-bottom:5px;">
                   <li class="list-group-item @if($payment_waiting_your_app->count() > 0) bg-warning @endif" style="padding:2px;"><a href="{{route('approval.payment_dashboard', ['q' => 'waiting_your_app'])}}">Waiting Your Approval: {{$payment_waiting_your_app->count()}}</a></li>
         <li class="list-group-item" style="padding:2px"><a href="{{route('approval.payment_dashboard', ['q' => 'waiting_final_app'])}}">Waiting Final Approval : {{$payment_waiting_final_app->count()}}</a></li>
@@ -46,11 +46,11 @@
       <ul class="list-group" style="margin-bottom:5px;">
         <li class="list-group-item" style="padding:2px">Done : {{$total_done}}</li>
         <li class="list-group-item" style="padding:2px">Waiting : {{$total_waiting}}</li>
-        <li class="list-group-item" style="padding:2px"><a href="?status=4&amp;o=allreject"> Reject  : {{$total_reject}}</a></li>
+        <li class="list-group-item" style="padding:2px"><a href="?status=4&amp;o=allreject"> Reject  : {{$total_reject}} </a></li>
       </ul>
     </li>
     <li class="list-group-item" style="padding:5px;"> 
-        <strong><i class="fas fa-download"></i><a href="download.php"> Download</a></strong>
+        <strong><i class="fas fa-download"></i></span><a href="download.php"> Download</a></strong>
       </li>
         <li class="list-group-item" style="padding:5px;"> 
         <strong><i class="fas fa-download"></i><a href="sumaryview.php"> Sumary View</a></strong>
@@ -62,22 +62,17 @@
   </ul>
 </div>
 <div class="col-md-10 mt-3">
-  <h4 class="bg-primary p-1 mb-0 text-center">Purchase Request</h4>
+  <h4 class="bg-primary p-1 mb-0 text-center">Payment Plan</h4>
   <table class="table table-striped" id="mytable">
     <thead>
         <tr>
             <th>#</th>
-            <th>범주/ Category</th>
-            <th>그룹/ Group</th>
-            <th>표제/ Title</th>
-            <th>문서 번호/ Doc No.</th>
-            <th>창조자/ Creator</th>
-            <th>날짜/ Date</th>
-            <th>승인 된 날짜/ Approved Date</th>
-            <th>양/ Amount</th>
-            <th>통화/ Currency</th>
-            <th>앱/ App</th>
-            <th>지위/ Status</th>
+            <th>Date create</th>
+            <th>Date</th>
+            <th>Creator</th>
+            <th>No & Link</th>
+            <th>App</th>
+            <th>Status</th>
         </tr>
     </thead>
 
@@ -86,23 +81,17 @@
       @foreach ($items as $index => $item)        
         <tr>
           <td>{{$index+1}}</td>
-          <td>Purchase</td>
-          <td>{{$item->cashgroup_name}}</td>
+          <td class="text-center">{{Carbon\Carbon::parse($item->created_at)->format('d-M-Y')}}</td>
+          <td class="text-center">{{Carbon\Carbon::parse($item->date_payment)->format('d-M-Y')}}</td>
+          <td class="text-center">{{$item->user_name}}</td>
           <td style="text-align:left; max-width: 50%;">
-            @if($item->isSubmitted)
-            <a href="/approval/purchase/show/{{$item->id}}">{{$item->title}}</a>
+            @if($item->is_submit)
+            <a href="/approval/paymentplan/show/{{$item->id}}">{{$item->docno}}</a> - <span class="text-success">Submitted</span>
             @else
-            <a href="/approval/purchase/update/{{$item->id}}">{{$item->title}}</a>
+            <a href="/approval/paymentplan/edit/{{$item->id}}">{{$item->docno}}</a> - <span class="text-danger">Not submitted</span>
             @endif
           </td>
-          <td class="text-center">{{$item->docNumber}}</td>
-          <td class="text-center">{{$item->user_name}}</td>
-          <td class="text-center">{{Carbon\Carbon::parse($item->created_at)->format('d-M')}}</td>
-          <td>&nbsp;</td>
-          <td class="text-right">{{number_format($item->total_amount, 0)}}</td>
-          <td class="text-center">VND</td>
-          
-          @if($item->isSubmitted)
+          @if($item->is_submit)
           <td class="text-center @if($item->isRejected()) bg-danger @elseif($item->getNumberOfLinePassed() == 1) bg-warning @endif">@if($item->isRejected())<i class="fas fa-times"></i> @elseif($item->getNumberOfLinePassed() == 1) <i class="fas fa-sync-alt"></i>@else<i class="fas fa-check"></i>@endif</td>
           <td>
           <?php
@@ -113,14 +102,14 @@
             </div>
           </td>
           @else
-          <td></td>
-          <td></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
           @endif
         </tr>
       @endforeach
       @else
         <tr>
-          <td colspan="12" class="text-center">No items found</td>
+          <td colspan="7" class="text-center">No items found</td>
         </tr>
       @endif
     </tbody>

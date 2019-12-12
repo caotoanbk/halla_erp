@@ -45896,3 +45896,11 @@ readers do not read off random characters that represent icons */
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+.bg-orange {
+  background-color: orange !important;
+}
+
+table.dataTable {
+  border-collapse: collapse !important;
+}
+

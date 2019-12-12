@@ -120,7 +120,7 @@
                 </tfoot>
             </table>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 pt-5">
             <h4>윤곽 - Lines</h4>
             <p v-if="filteredLines.length == 0" class="d-inline-block bg-danger p-1">No lines selected</p>
             <div class="row">
@@ -168,6 +168,7 @@
             </div>
             <div v-else class="mt-4">
                 <h5 class="text-danger">THIS PAYMENT WERE SUBMITTED</h5>
+                <a :href="'/approval/paymentplan/print/'+paymentplan_id" class="btn btn-secondary"><i class="fas fa-print">&nbsp;Print</i></a>
             </div>
         </div>
     </div>

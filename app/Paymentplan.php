@@ -28,4 +28,57 @@ class Paymentplan extends Model
     {
         return $this->hasMany('App\Linepayment', 'paymentplan_id');
     }
+
+    public function isApproved()
+    {
+       $lines = $this->lines()->get();
+       foreach ($lines as $line) {
+            if($line->status != 1)
+            {
+                return false;
+            }
+       }
+       return true;
+    }
+
+    public function isRejected()
+    {
+        $lines = $this->lines()->get();
+       foreach ($lines as $line) {
+            if($line->status == 2)
+            {
+                return true;
+            }
+       }
+       return false;
+    }
+
+    public function currentLine()
+    {
+        $line = $this->lines()->where('status', 3)->first();
+        if($line){
+            return $line->user_id;
+        }
+
+    }
+    public function isGettingFinalApproval()
+    {
+        $line = $this->lines()->orderBy('id', 'desc')->first();
+        if($line){
+            if($line->status == 3){
+                return true;
+            }
+        }
+        return false;
+    }
+    public function checkContainLine($user_id)
+    {
+        $lines = $this->lines()->where('status', '!=', 0)->pluck('user_id')->all();
+        return in_array($user_id, $lines);
+    }
+
+    public function getNumberOfLinePassed()
+    {
+        return ($this->lines()->count() - $this->lines()->where('status', 0)->count());
+    }
 }

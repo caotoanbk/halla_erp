@@ -2016,6 +2016,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -42684,7 +42685,7 @@ var render = function() {
     _vm._v(" "),
     _c(
       "div",
-      { staticClass: "col-md-4" },
+      { staticClass: "col-md-4 pt-5" },
       [
         _c("h4", [_vm._v("윤곽 - Lines")]),
         _vm._v(" "),
@@ -42881,7 +42882,18 @@ var render = function() {
           : _c("div", { staticClass: "mt-4" }, [
               _c("h5", { staticClass: "text-danger" }, [
                 _vm._v("THIS PAYMENT WERE SUBMITTED")
-              ])
+              ]),
+              _vm._v(" "),
+              _c(
+                "a",
+                {
+                  staticClass: "btn btn-secondary",
+                  attrs: {
+                    href: "/approval/paymentplan/print/" + _vm.paymentplan_id
+                  }
+                },
+                [_c("i", { staticClass: "fas fa-print" }, [_vm._v(" Print")])]
+              )
             ])
       ],
       2

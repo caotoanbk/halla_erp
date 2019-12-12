@@ -1,6 +1,6 @@
 <template>
     <div class="row mt-3 w-100">
-        <div class="col-md-8">
+        <div class="col-md-12 px-4">
             <h3 class="text-center">
                 출금 계획 - Payment Plan
             </h3>
@@ -44,8 +44,8 @@
                             <td>{{items[name][Object.keys(items[name])[0]][0].supplier_name}}</td>
                             <td>{{items[name][Object.keys(items[name])[0]][0].purchase_title}}</td>
                             <td style="text-align: right; padding: 5px">{{items[name][Object.keys(items[name])[0]][0].amount.toLocaleString('es-ES')}}</td>
-                            <td class="text-center"><a target="_blank" :href="'/approval/purchase/show/'+items[name][Object.keys(items[name])[0]][0].purchaserequest_id">
-                            {{items[name][Object.keys(items[name])[0]][0].purchase_docno}}</a></td>
+                            <td class="text-center">
+                            {{items[name][Object.keys(items[name])[0]][0].purchase_docno}}</td>
                         </tr>
                         <template v-for="(val,name, index1) in value">
                             <tr :key="name" v-if="index1 > 0">
@@ -54,7 +54,7 @@
                                 <td>{{val[0].supplier_name}}</td>
                                 <td>{{val[0].purchase_title}}</td>
                                 <td style="text-align: right; padding: 5px">{{val[0].amount.toLocaleString('es-ES')}}</td>
-                                <td class="text-center"><a target="_blank" :href="'/approval/purchase/show/'+val[0].purchaserequest_id">{{val[0].purchase_docno}}</a></td>
+                                <td class="text-center">{{val[0].purchase_docno}}</td>
                             </tr>
                             <template v-for="(item,index2) in val">
                                 <tr :key="item.id" v-if="index2 > 0">
@@ -62,7 +62,7 @@
                                     <td>{{item.supplier_name}}</td>
                                     <td>{{item.purchase_title}}</td>
                                     <td style="text-align: right; padding: 5px">{{item.amount.toLocaleString('es-ES')}}</td>
-                                    <td class="text-center"><a target="_blank" :href="'/approval/purchase/show/'+item.purchaserequest_id">{{item.purchase_docno}}</a></td>
+                                    <td class="text-center">{{item.purchase_docno}}</td>
                                 </tr>
                             </template>
                             <tr>
@@ -78,17 +78,17 @@
                                 <td></td>
                             </tr>
                         </template>
-                        <tr class="bg-warning">
+                        <tr class="">
                             <td colspan="4" class="font-weight-bold">Total VND</td>
                             <td style="text-align: right; padding: 5px"><strong>{{calculateTotal(orignItems[name]).toLocaleString('es-ES')}}</strong></td>
                             <td></td>
                         </tr>
-                        <tr class="bg-warning">
+                        <tr class="">
                             <td colspan="4" class="font-weight-bold">Total USD</td>
                             <td style="text-align: right; padding: 5px"><strong>{{(calculateTotal(orignItems[name])/form.usd_vnd).toLocaleString('es-ES')}}</strong></td>
                             <td></td>
                         </tr>
-                        <tr class="bg-warning">
+                        <tr class="">
                             <td colspan="4" class="font-weight-bold">Total KRW</td>
                             <td style="text-align: right; padding: 5px"><strong>{{(calculateTotal(orignItems[name])*(form.vnd_krw)/100).toLocaleString('es-ES')}}</strong></td>
                             <td></td>
@@ -98,71 +98,23 @@
                 </tbody>
                 <tfoot>
 
-                    <tr class="bg-danger">
+                    <tr>
                         <td colspan="5"><strong class="">&rarr;&nbsp;Total VND</strong></td>
                         <td style="text-align: right; padding: 5px;"><strong>{{calculateTotal(payment_bank_purchases).toLocaleString('es-ES')}}</strong></td>
                         <td></td>
                     </tr>
-                    <tr class="bg-danger">
+                    <tr>
                         <td colspan="5"><strong class="">&rarr;&nbsp;Total USD</strong></td>
                         <td style="text-align: right; padding: 5px"><strong>{{(calculateTotal(payment_bank_purchases)/form.usd_vnd).toLocaleString('es-ES')}}</strong></td>
                         <td></td>
                     </tr>
-                    <tr class="bg-danger">
+                    <tr>
                         <td colspan="5"><strong class="">&rarr;&nbsp;Total KRW</strong></td>
                         <td style="text-align: right; padding: 5px"><strong>{{(calculateTotal(payment_bank_purchases)*form.vnd_krw/100).toLocaleString('es-ES')}}</strong></td>
                         <td></td>
                     </tr>
                 </tfoot>
             </table>
-        </div>
-        <div class="col-md-4 pt-5">
-            <h4>Line comment</h4>
-            <template v-for="(line,index) in form.lines">
-                <div v-if="line.status == '3' && (line.user_id == current_user_id.toString())" :key="line.id">
-                    <textarea name="" id="" cols="30" rows="3" class="form-control" v-model="line.comment"></textarea>
-                    <div class="my-2 row">
-                        <div class="col-md-6"><button class="btn btn-success btn-block" @click="approvePayment(line,index)">Approve</button></div>
-                        <div class="col-md-6"><button class="btn btn-danger btn-block" @click="rejectPayment(line,index)">Reject</button></div>
-                    </div>
-                </div>
-            </template>
-            <div class="row">
-                <div class="col-md-12">
-                    <table class="w-100">
-                        <thead>
-                            <tr class="text-center" style="background-color: #f2dcdb;">
-                                <th>Line</th>
-                                <th>PIC</th>
-                                <th>Position</th>
-                                <th>Status</th>
-                                <th>Time</th>
-                                <th>Comment</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <template v-if="usersOptions.length > 0">
-                            <tr v-for="(line,index) in form.lines" :key="line.id">
-                                <td>{{index+1}}</td>
-                                <td>{{findUser(parseInt(line.user_id)).employee.EmployeeName}}</td>
-                                <td>{{findUser(parseInt(line.user_id)).employee.EmployeeInformation}}</td>
-                                <td v-if="line.status == '1'" class="bg-success text-center">Approved</td>
-                                <td v-else-if="line.status == '2'" class="bg-danger text-center">Rejected</td>
-                                <td v-else-if="line.status == '3'" class="bg-warning text-center">In Progress</td>
-                                <td v-else>&nbsp;</td>
-                                <td>{{line.action_date|myDate}}</td>
-                                <td v-if="(line.status == '1' || line.status == '2') && line.user_id == current_user_id.toString()">
-                                    <textarea cols="30" rows="2" v-model="line.comment" class="form-control"></textarea>
-                                    <button class="btn btn-primary btn-sm" @click.prevent="updateComment(line)">update comment</button>
-                                </td>
-                                <td v-else>{{line.comment}}</td>
-                            </tr>
-                            </template>
-                        </tbody>
-                    </table>
-                    <a :href="'/approval/paymentplan/print/'+paymentplan_id" class="btn btn-secondary mt-3"><i class="fas fa-print">&nbsp;Print</i></a>
-                </div>
-            </div>
         </div>
     </div>
 </template>

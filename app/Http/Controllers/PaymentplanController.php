@@ -99,9 +99,42 @@ class PaymentplanController extends Controller
         $line = Linepayment::find($id);
         if($line)
         {
-            $request->merge(['action_date' => Carbon::now()]);
+            $originStatus = $line->status;
+            if($request->get('status')){
+                $request->merge(['action_date' => Carbon::now()]);
+            }
             $line->update($request->all());
+            
+
+            if($request->get('status'))
+            {
+                // update in progress status
+                if($request->get('status') == '1' && $originStatus != 1)
+                {
+                    $nextLine = $line->paymentplan()->first()->lines()->where('id', '>', $id)->first();
+                    if($nextLine)
+                    {
+                        $nextLine->status = 3;
+                        $nextLine->save();
+                    }
+                }
+
+                return $line->action_date;
+            }
+            
         }
+    }
+
+    public function print($id)
+    {
+        $payment = Paymentplan::find($id);
+        if(!$payment){
+            return abort('404');
+        }
+        if(!$payment->is_submit){
+            return 'Payment not submitted';
+        }
+        return view('approval.paymentplan.print', compact('id'));
     }
 
 }

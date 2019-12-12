@@ -12,6 +12,8 @@ use App\PaymentBankPurchase;
 use App\Paymentplan;
 use App\User;
 use App\Purchaserequest;
+use Carbon\Carbon;
+use Yajra\Datatables\Datatables;
 
 class ApprovalController extends Controller
 {
@@ -205,5 +207,40 @@ class ApprovalController extends Controller
         ]);
         session()->flash('status', 'ExRate created!');
         return redirect()->route('approval.exrate');
+    }
+
+    public function purchaseDatatable()
+    {
+        $purchases = Purchaserequest::where('isSubmitted', true)->select();
+        return Datatables::of($purchases)
+        ->addColumn('category', function($value){
+            return 'Purchase';
+        })
+        ->addColumn('group_name', function($model){
+            return $model->cashgroup_name;
+        })
+        ->editColumn('title', function($model){
+            return '<a href="/approval/purchase/show/'.$model->id.'">'.$model->title."</a>";
+        })
+        ->addColumn('user_name', function($model){
+            return $model->user_name;
+        })
+        ->editColumn('created_at', function($model){
+            return Carbon::parse($model->created_at)->format('d-M-Y');
+        })
+        ->addColumn('approved_date', function($model){
+            return 'today';
+        })
+        ->addColumn('total_amount', function($model){
+            return $model->total_amount;
+        })
+        ->addColumn('app', function($model){
+            return '';
+        })
+        ->addColumn('status', function($model){
+            return '';
+        })
+        ->rawColumns(['title'])
+        ->make(true);
     }
 }
